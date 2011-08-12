@@ -19,5 +19,10 @@ module FatFreeCRM
       belongs_to :company, :foreign_key => :MainCompanyID
     end
 
+    class User < Base
+      set_table_name :tblUser
+      set_primary_key :UserID
+    end
+
   end
 end

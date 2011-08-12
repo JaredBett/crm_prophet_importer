@@ -6,14 +6,14 @@ namespace :crm do
 
     desc "Import prophet data"
     task :import => :environment do
-      db_config = YAML::load(File.open(File.join(Rails.root, 'config', 'prophet.yml')))
-      FatFreeCRM::Prophet::Base.establish_connection(db_config)
+      config = YAML::load(File.open(File.join(Rails.root, 'config', 'prophet.yml')))
+      FatFreeCRM::Prophet::Base.establish_connection(config['database'])
 
       puts "Deleting existing companies"
       Account.delete_all
 
       puts "Importing companies..."
-      FatFreeCRM::Prophet::Import.companies
+      FatFreeCRM::Prophet::Import.companies(config['users'])
 
       #puts "Importing people..."
       #people, contacts = FatFreeCRM::prophet::Import.people
@@ -31,6 +31,10 @@ namespace :crm do
 
       #puts "Importing tasks..."
       #FatFreeCRM::prophet::Import.standalone_tasks
+      
+
+      puts "Clearing out all activities..."
+      Activity.delete_all
     end
 
   end
