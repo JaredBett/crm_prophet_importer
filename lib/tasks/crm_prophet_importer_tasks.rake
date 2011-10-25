@@ -17,6 +17,23 @@ namespace :crm do
       puts "Importing companies..."
       FatFreeCRM::Prophet::Import.companies(config['users'])
 
+      #puts "Importing people..."
+      #people, contacts = FatFreeCRM::prophet::Import.people
+      #puts "  Importing related notes..."
+      #FatFreeCRM::prophet::Import.notes(people, contacts)
+      #puts "  Importing related tasks..."
+      #FatFreeCRM::prophet::Import.related_tasks(people, contacts)
+
+      #puts "Importing companies..."
+      #companies, accounts = FatFreeCRM::prophet::Import.companies
+      #puts "  Importing related notes..."
+      #FatFreeCRM::prophet::Import.notes(companies, contacts)
+      #puts "  Importing related tasks..."
+      #FatFreeCRM::prophet::Import.related_tasks(companies, accounts)
+
+      #puts "Importing tasks..."
+      #FatFreeCRM::prophet::Import.standalone_tasks
+
       puts "Clearing out all activities..."
       Activity.delete_all
     end

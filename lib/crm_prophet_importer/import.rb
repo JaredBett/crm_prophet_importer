@@ -107,6 +107,23 @@ module FatFreeCRM
               end
             end
 
+            c.opportunities.each do |opp|
+              puts "Adding opportunity note to company #{trunc_name}"
+              opp_user_id = user_ids[opp.UserID] || DEFAULT_USER_ID
+              opp.notes.each do |opp_note|
+                ::Comment.create(
+                  :user_id          => opp_user_id,
+                  :commentable_id   => account.id,
+                  :commentable_type => 'Account',
+                  :private          => false,
+                  :title            => "",
+                  :comment          => opp_note.Note[0..254],
+                  :created_at       => opp_note.CreatedDate,
+                  :updated_at       => opp.UpdatedDate
+                )
+              end
+            end
+
             #if company.contact_data.addresses.present?
               #highrise_address = company.contact_data.addresses.first
               #account.billing_address = ::Address.new(:full_address => extract(company.contact_data, :address))

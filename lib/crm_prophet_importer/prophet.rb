@@ -18,6 +18,7 @@ module FatFreeCRM
 
       has_many :contacts, :foreign_key => :MainCompanyID
       has_many :addresses, :class_name => "CompanyAddress", :foreign_key => :CompanyID
+      has_many :opportunities, :foreign_key => :CompanyID
     end
 
     class Contact < Base
@@ -25,10 +26,10 @@ module FatFreeCRM
       set_primary_key :ContactID
 
       belongs_to :company, :foreign_key => :MainCompanyID
-      has_one :notes, :class_name => "ContactNotes", :foreign_key => :ContactID
+      has_one :notes, :class_name => "ContactNote", :foreign_key => :ContactID
     end
 
-    class ContactNotes < Base
+    class ContactNote < Base
       set_table_name :tblContactNotes
       set_primary_key :ContactID
 
@@ -38,6 +39,18 @@ module FatFreeCRM
     class User < Base
       set_table_name :tblUser
       set_primary_key :UserID
+    end
+
+    class Opportunity < Base
+      set_table_name :tblIncident
+      set_primary_key :IncidentID
+
+      has_many :notes, :class_name => "OpportunityNote", :foreign_key => :IncidentID
+    end
+
+    class OpportunityNote < Base
+      set_table_name :tblIncidentNote
+      set_primary_key :NoteID
     end
 
   end
