@@ -19,6 +19,7 @@ module FatFreeCRM
       has_many :contacts, :foreign_key => :MainCompanyID
       has_many :addresses, :class_name => "CompanyAddress", :foreign_key => :CompanyID
       has_many :opportunities, :foreign_key => :CompanyID
+      has_many :categories, :foreign_key => :ItemID
     end
 
     class Contact < Base
@@ -27,6 +28,7 @@ module FatFreeCRM
 
       belongs_to :company, :foreign_key => :MainCompanyID
       has_one :notes, :class_name => "ContactNote", :foreign_key => :ContactID
+      has_many :categories, :foreign_key => :ItemID
     end
 
     class ContactNote < Base
@@ -51,6 +53,12 @@ module FatFreeCRM
     class OpportunityNote < Base
       set_table_name :tblIncidentNote
       set_primary_key :NoteID
+    end
+
+    class Category < Base
+      set_table_name :tblContCompCategory
+      set_primary_keys :ItemID, :CategoryID
+      def name; attributes['Unused1']; end
     end
 
   end

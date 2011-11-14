@@ -10,12 +10,15 @@ namespace :crm do
       FatFreeCRM::Prophet::Base.establish_connection(config['database'])
 
       puts "Deleting existing data"
+      Activity.delete_all
       Account.delete_all
       Contact.delete_all
       Address.delete_all
+      Tagging.delete_all
+      Tag.delete_all
 
       puts "Importing companies..."
-      FatFreeCRM::Prophet::Import.companies(config['users'])
+      FatFreeCRM::Prophet::Import.companies(config)
 
       #puts "Importing people..."
       #people, contacts = FatFreeCRM::prophet::Import.people

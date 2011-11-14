@@ -7,7 +7,9 @@ module FatFreeCRM
 
       class << self
 
-        def companies(username_map)
+        def companies(config)
+          username_map = config['users']
+          tag_map = config['tags']
 
           user_ids = {}
           username_map.each do |prophet_user, ff_user|
@@ -16,7 +18,7 @@ module FatFreeCRM
             user_ids[prophet_user_id] = ff_user_id
           end
 
-          #Company.limit(100).where("CompName != '' AND CompName = 'Jupit.net'").each do |c|
+          #Company.limit(100).where("CompName = 'Jupit.net'").each do |c|
           Company.where("CompName != ''").each do |c|
             puts "Importing Company #{c.CompName}"
 
@@ -28,6 +30,7 @@ module FatFreeCRM
               next
             end
 
+            ### create account
             account = ::Account.create(
               :user_id          => user_id,
               :assigned_to      => user_id,
@@ -41,6 +44,7 @@ module FatFreeCRM
               :updated_at       => c.UpdatedDate
             )
 
+            ### create account notes
             if c.CompNotes.present?
               puts "Adding note to company #{trunc_name}"
               ::Comment.create(
@@ -55,6 +59,7 @@ module FatFreeCRM
               )
             end
 
+            ### create account addresses
             c.addresses.each do |a|
               type = a.AddrType == 1 ? 'Shipping' : 'Billing'
               newAddr = ::Address.create(
@@ -74,8 +79,23 @@ module FatFreeCRM
               end
             end
 
+
+            ### create account tags
+            tags = []
+            c.categories.each do |category|
+                tags << tag_map[category.name] if tag_map.include? category.name
+            end
+            if tags.any?
+              puts "Adding tags to company #{c.CompName}: #{tags.join(',')}"
+              account.tag_list = tags.join(',')
+              account.save
+            end
+
+
+            ### create contacts
             c.contacts.each do |contact|
               puts "Importing Contact #{contact.ContactName}"
+              ### create contact
               ff_contact = account.contacts.create(
                 :user_id => user_id,
                 :first_name => contact.FirstName,
@@ -92,6 +112,7 @@ module FatFreeCRM
                 :updated_at => contact.UpdatedDate
               )
               notes = contact.notes
+              ### create contact notes
               if notes && notes.Notes.present?
                 puts "Adding note to contact #{contact.ContactName}"
                 ::Comment.create(
@@ -105,8 +126,20 @@ module FatFreeCRM
                   :updated_at       => contact.UpdatedDate
                 )
               end
+
+              ### create contact tags
+              tags = []
+              contact.categories.each do |category|
+                  tags << tag_map[category.name] if tag_map.include? category.name
+              end
+              if tags.any?
+                puts "Adding tags to contact #{contact.ContactName}: #{tags.join(',')}"
+                ff_contact.tag_list = tags.join(',')
+                ff_contact.save
+              end
             end
 
+            ### create additional account notes from opportunity notes
             c.opportunities.each do |opp|
               puts "Adding opportunity note to company #{trunc_name}"
               opp_user_id = user_ids[opp.UserID] || DEFAULT_USER_ID
@@ -124,17 +157,8 @@ module FatFreeCRM
               end
             end
 
-            #if company.contact_data.addresses.present?
-              #highrise_address = company.contact_data.addresses.first
-              #account.billing_address = ::Address.new(:full_address => extract(company.contact_data, :address))
-              #account.shipping_address = ::Address.new(:full_address => extract(company.contact_data, :address))
-              #account.save!
-            #end
-            #import_email(company, account)
-            # puts account.inspect
           end
         end
-
       end
     end
   end
