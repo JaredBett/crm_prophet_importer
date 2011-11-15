@@ -5,7 +5,7 @@ module FatFreeCRM
       self.abstract_class = true
     end
 
-    class CompanyAddress < Base
+    class Address < Base
       set_table_name :tblCompanyAddr
       set_primary_keys :CompanyID, :AddrType
 
@@ -17,7 +17,7 @@ module FatFreeCRM
       set_primary_key :CompanyID
 
       has_many :contacts, :foreign_key => :MainCompanyID
-      has_many :addresses, :class_name => "CompanyAddress", :foreign_key => :CompanyID
+      has_many :addresses, :foreign_key => :CompanyID
       has_many :opportunities, :foreign_key => :CompanyID
       has_many :categories, :foreign_key => :ItemID
     end
@@ -29,6 +29,7 @@ module FatFreeCRM
       belongs_to :company, :foreign_key => :MainCompanyID
       has_one :notes, :class_name => "ContactNote", :foreign_key => :ContactID
       has_many :categories, :foreign_key => :ItemID
+      has_many :addresses, :foreign_key => :CompanyID
     end
 
     class ContactNote < Base

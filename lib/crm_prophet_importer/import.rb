@@ -62,7 +62,7 @@ module FatFreeCRM
 
             ### create account addresses
             c.addresses.each do |a|
-              type = a.AddrType == 1 ? 'Shipping' : 'Billing'
+              type = a.AddrType == 0 ? 'Billing': 'Shipping'
               newAddr = ::Address.create(
                 :address_type     => type,
                 :street1          => a.CompAddr,
@@ -126,6 +126,20 @@ module FatFreeCRM
                   :comment          => notes.Notes[0..254],
                   :created_at       => contact.CreatedDate,
                   :updated_at       => contact.UpdatedDate
+                )
+              end
+
+              ### create contact addresses
+              contact.addresses.each do |a|
+                ff_contact.business_address = ::Address.create(
+                  :address_type     => 'Business',
+                  :street1          => a.CompAddr,
+                  :city             => a.CompCity,
+                  :state            => a.CompState,
+                  :zipcode          => a.CompZip,
+                  :country          => a.CompCountry,
+                  :created_at       => c.CreatedDate,
+                  :updated_at       => c.UpdatedDate
                 )
               end
 
