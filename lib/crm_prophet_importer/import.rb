@@ -32,6 +32,7 @@ module FatFreeCRM
 
             ### create account
             account = ::Account.create(
+              :prophet_company_id => c.CompanyID,
               :user_id          => user_id,
               :assigned_to      => user_id,
               :name             => trunc_name,
@@ -97,6 +98,7 @@ module FatFreeCRM
               puts "Importing Contact #{contact.ContactName}"
               ### create contact
               ff_contact = account.contacts.create(
+                :prophet_contact_id => contact.ContactID,
                 :user_id => user_id,
                 :first_name => contact.FirstName,
                 :last_name => contact.LastName,
